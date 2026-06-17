@@ -1,4 +1,4 @@
-require_dependency 'redmine_paid_time_summary'
+require_relative '../../app/models/redmine_paid_time_summary'
 
 class RedminePaidTimeSummaryHook < Redmine::Hook::ViewListener
   render_on :view_projects_show_left,
