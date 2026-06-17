@@ -25,12 +25,16 @@ module RedminePaidTimeSummary
     base_time_entry_scope
       .joins(:issue)
       .joins(paid_issue_custom_value_join)
-      .where("#{TimeEntry.table_name}.project_id = ?", project.id)
+      .where("#{TimeEntry.table_name}.project_id IN (?)", project_and_descendant_ids(project))
       .where(
         'paid_issue_custom_values.custom_field_id = ? AND paid_issue_custom_values.value = ?',
         INVOICED_CUSTOM_FIELD_ID,
         INVOICED_VALUE
       )
+  end
+
+  def project_and_descendant_ids(project)
+    [project.id] + project.descendants.pluck(:id)
   end
 
   def base_time_entry_scope

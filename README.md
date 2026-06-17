@@ -4,13 +4,13 @@ Adds a small "Total Paid Time" box to the Redmine project overview page.
 
 ## Business Rule
 
-For the current project, total paid time is calculated as:
+For the current project and its child projects, total paid time is calculated as:
 
 ```sql
 SUM(time_entries.hours)
 ```
 
-Only time entries linked to issues where issue custom field `72` (`Invoiced?`) has value `"1"` are counted.
+Only time entries in the current project or descendant projects linked to issues where issue custom field `72` (`Invoiced?`) has value `"1"` are counted.
 
 Redmine boolean custom field values are handled as:
 
