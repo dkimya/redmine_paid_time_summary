@@ -1,0 +1,13 @@
+<% paid_time_project = local_assigns[:project] || @project %>
+
+<% if paid_time_project && User.current.allowed_to?(:view_time_entries, paid_time_project) %>
+  <% summary = RedminePaidTimeSummary.for_project(paid_time_project) %>
+
+  <div class="box">
+    <h3>Total Paid Time</h3>
+    <ul>
+      <li>Paid issues: <%= summary.paid_issues_count %></li>
+      <li>Total paid time: <%= number_with_precision(summary.total_paid_hours, precision: 2) %> hours</li>
+    </ul>
+  </div>
+<% end %>
