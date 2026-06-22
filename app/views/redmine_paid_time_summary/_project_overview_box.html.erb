@@ -3,8 +3,9 @@
 <% if paid_time_project && User.current.allowed_to?(:view_time_entries, paid_time_project) %>
   <% summary = RedminePaidTimeSummary.for_project(paid_time_project) %>
   <% invoiced_filter = "cf_#{RedminePaidTimeSummary::INVOICED_CUSTOM_FIELD_ID}" %>
-  <% paid_issue_ids = RedminePaidTimeSummary.project_and_descendant_ids(paid_time_project).map(&:to_s) %>
-  <% paid_issues_url = issues_path(
+  <% paid_project_ids = RedminePaidTimeSummary.project_and_descendant_ids(paid_time_project).map(&:to_s) %>
+  <% paid_issues_url = project_issues_path(
+    paid_time_project,
     set_filter: 1,
     f: ['project_id', invoiced_filter, ''],
     op: {
@@ -12,7 +13,7 @@
       invoiced_filter => '='
     },
     v: {
-      'project_id' => paid_issue_ids,
+      'project_id' => paid_project_ids,
       invoiced_filter => [RedminePaidTimeSummary::INVOICED_VALUE]
     }
   ) %>
