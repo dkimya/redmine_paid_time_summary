@@ -24,7 +24,7 @@ The plugin does not check for the string `"YES"`.
 
 The project overview page shows:
 
-- Paid issues count, linked to the filtered Redmine issue list
+- Paid issues count, linked to the filtered Redmine issue list by exact issue IDs
 - Total paid time rounded to 2 decimals
 
 ## Installation

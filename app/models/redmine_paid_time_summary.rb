@@ -2,7 +2,7 @@ module RedminePaidTimeSummary
   INVOICED_CUSTOM_FIELD_ID = 72
   INVOICED_VALUE = '1'
 
-  Result = Struct.new(:paid_issues_count, :total_paid_hours, keyword_init: true)
+  Result = Struct.new(:paid_issue_ids, :paid_issues_count, :total_paid_hours, keyword_init: true)
 
   module_function
 
@@ -10,15 +10,17 @@ module RedminePaidTimeSummary
     return empty_result unless project
 
     paid_entries = paid_time_entries_for(project)
+    paid_issue_ids = paid_entries.distinct.pluck("#{Issue.table_name}.id")
 
     Result.new(
-      paid_issues_count: paid_entries.distinct.count("#{Issue.table_name}.id"),
+      paid_issue_ids: paid_issue_ids,
+      paid_issues_count: paid_issue_ids.count,
       total_paid_hours: paid_entries.sum("#{TimeEntry.table_name}.hours").to_f.round(2)
     )
   end
 
   def empty_result
-    Result.new(paid_issues_count: 0, total_paid_hours: 0.0)
+    Result.new(paid_issue_ids: [], paid_issues_count: 0, total_paid_hours: 0.0)
   end
 
   def paid_time_entries_for(project)

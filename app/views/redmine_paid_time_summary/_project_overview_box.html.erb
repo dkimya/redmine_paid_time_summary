@@ -2,26 +2,32 @@
 
 <% if paid_time_project && User.current.allowed_to?(:view_time_entries, paid_time_project) %>
   <% summary = RedminePaidTimeSummary.for_project(paid_time_project) %>
-  <% invoiced_filter = "cf_#{RedminePaidTimeSummary::INVOICED_CUSTOM_FIELD_ID}" %>
-  <% paid_project_ids = RedminePaidTimeSummary.project_and_descendant_ids(paid_time_project).map(&:to_s) %>
-  <% paid_issues_url = project_issues_path(
-    paid_time_project,
-    set_filter: 1,
-    f: ['project_id', invoiced_filter, ''],
-    op: {
-      'project_id' => '=',
-      invoiced_filter => '='
-    },
-    v: {
-      'project_id' => paid_project_ids,
-      invoiced_filter => [RedminePaidTimeSummary::INVOICED_VALUE]
-    }
-  ) %>
+  <% paid_issues_url =
+    if summary.paid_issue_ids.any?
+      issues_path(
+        set_filter: 1,
+        f: ['issue_id', ''],
+        op: {
+          'issue_id' => '='
+        },
+        v: {
+          'issue_id' => [summary.paid_issue_ids.join(',')]
+        }
+      )
+    end
+  %>
 
   <div class="box">
     <h3>Total Paid Time</h3>
     <ul>
-      <li>Paid issues: <%= link_to summary.paid_issues_count, paid_issues_url %></li>
+      <li>
+        Paid issues:
+        <% if paid_issues_url %>
+          <%= link_to summary.paid_issues_count, paid_issues_url %>
+        <% else %>
+          <%= summary.paid_issues_count %>
+        <% end %>
+      </li>
       <li>Total paid time: <%= number_with_precision(summary.total_paid_hours, precision: 2) %> hours</li>
     </ul>
   </div>
