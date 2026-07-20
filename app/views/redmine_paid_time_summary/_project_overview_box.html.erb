@@ -20,7 +20,7 @@
     <h3>Total Paid Time</h3>
     <ul>
       <li>Paid issues: <%= link_to summary.paid_issues_count, paid_issues_url %></li>
-      <li>Total paid time: <%= number_with_precision(summary.total_paid_hours, precision: 2) %> hours</li>
+      <li>Total paid time: <%= RedminePaidTimeSummary.format_hours_as_hhmm(summary.total_paid_hours) %> hours</li>
     </ul>
   </div>
 <% end %>

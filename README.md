@@ -25,7 +25,7 @@ The plugin does not check for the string `"YES"`.
 The project overview page shows:
 
 - Paid issues count, linked to the filtered Redmine issue list for `Invoiced? = Yes`
-- Total paid time rounded to 2 decimals
+- Total paid time formatted as `hh:mm`
 
 ## Installation
 
@@ -44,7 +44,7 @@ No database migration is required for version 1.
 From the Redmine root, after installing the plugin and restarting/reloading the app:
 
 ```bash
-bin/rails runner "project = Project.find(210); summary = RedminePaidTimeSummary.for_project(project); puts \"Paid issues: #{summary.paid_issues_count}\"; puts \"Total paid time: #{format('%.2f', summary.total_paid_hours)}\""
+bin/rails runner "project = Project.find(210); summary = RedminePaidTimeSummary.for_project(project); puts \"Paid issues: #{summary.paid_issues_count}\"; puts \"Total paid time: #{RedminePaidTimeSummary.format_hours_as_hhmm(summary.total_paid_hours)}\""
 ```
 
 ## Test Case
@@ -54,5 +54,5 @@ Confirmed project:
 - Project ID: `210`
 - Identifier: `nwp-northwood-propane`
 - Expected paid issues: `1`
-- Expected total paid time: `13.37` hours
+- Expected total paid time: `13:22` hours (`13.37` decimal hours)
 - Ticket: `#13606`

@@ -13,7 +13,7 @@ module RedminePaidTimeSummary
 
     Result.new(
       paid_issues_count: paid_entries.distinct.count("#{Issue.table_name}.id"),
-      total_paid_hours: paid_entries.sum("#{TimeEntry.table_name}.hours").to_f.round(2)
+      total_paid_hours: paid_entries.sum("#{TimeEntry.table_name}.hours").to_f
     )
   end
 
@@ -35,6 +35,12 @@ module RedminePaidTimeSummary
 
   def project_and_descendant_ids(project)
     [project.id] + project.descendants.pluck(:id)
+  end
+
+  def format_hours_as_hhmm(hours)
+    total_minutes = (hours.to_f * 60).round
+
+    format('%d:%02d', total_minutes / 60, total_minutes % 60)
   end
 
   def base_time_entry_scope
