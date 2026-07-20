@@ -10,7 +10,7 @@ For the current project and its child projects, total paid time is calculated as
 SUM(time_entries.hours)
 ```
 
-Only time entries in the current project or descendant projects linked to issues where issue custom field `72` (`Invoiced?`) has value `"1"` are counted.
+All issues in the current project or descendant projects where issue custom field `72` (`Invoiced?`) has value `"1"` are counted, regardless of status or whether time has been logged. Total paid time includes all time entries linked to those issues.
 
 Redmine boolean custom field values are handled as:
 
@@ -24,7 +24,7 @@ The plugin does not check for the string `"YES"`.
 
 The project overview page shows:
 
-- Paid issues count, linked to the filtered Redmine issue list for `Invoiced? = Yes`
+- Paid issues count, linked to the filtered Redmine issue list for `Invoiced? = Yes` and all statuses
 - Total paid time formatted as `hh:mm`
 
 ## Installation

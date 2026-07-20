@@ -9,10 +9,11 @@ module RedminePaidTimeSummary
   def for_project(project)
     return empty_result unless project
 
+    paid_issues = paid_issues_for(project)
     paid_entries = paid_time_entries_for(project)
 
     Result.new(
-      paid_issues_count: paid_entries.distinct.count("#{Issue.table_name}.id"),
+      paid_issues_count: paid_issues.distinct.count("#{Issue.table_name}.id"),
       total_paid_hours: paid_entries.sum("#{TimeEntry.table_name}.hours").to_f
     )
   end
@@ -22,10 +23,18 @@ module RedminePaidTimeSummary
   end
 
   def paid_time_entries_for(project)
+    paid_issue_ids = paid_issues_for(project).select("#{Issue.table_name}.id")
+
     base_time_entry_scope
       .joins(:issue)
-      .joins(paid_issue_custom_value_join)
       .where("#{TimeEntry.table_name}.project_id IN (?)", project_and_descendant_ids(project))
+      .where("#{Issue.table_name}.id IN (?)", paid_issue_ids)
+  end
+
+  def paid_issues_for(project)
+    base_issue_scope
+      .joins(paid_issue_custom_value_join)
+      .where("#{Issue.table_name}.project_id IN (?)", project_and_descendant_ids(project))
       .where(
         'paid_issue_custom_values.custom_field_id = ? AND paid_issue_custom_values.value = ?',
         INVOICED_CUSTOM_FIELD_ID,
@@ -45,6 +54,10 @@ module RedminePaidTimeSummary
 
   def base_time_entry_scope
     TimeEntry.respond_to?(:visible) ? TimeEntry.visible : TimeEntry.all
+  end
+
+  def base_issue_scope
+    Issue.respond_to?(:visible) ? Issue.visible : Issue.all
   end
 
   def paid_issue_custom_value_join

@@ -7,8 +7,9 @@
     paid_time_project,
     set_filter: 1,
     sort: 'id:desc',
-    f: [invoiced_filter, ''],
+    f: ['status_id', invoiced_filter, ''],
     op: {
+      'status_id' => '*',
       invoiced_filter => '='
     },
     v: {
